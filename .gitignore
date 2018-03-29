@@ -1,4 +1,7 @@
 *.fa
+*.fai
+*.fsta
+*.fsa
 *.fasta
 *.gtf
 *.psl

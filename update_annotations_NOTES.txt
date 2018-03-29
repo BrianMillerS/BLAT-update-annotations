@@ -1,0 +1,17 @@
+
+
+An error was raised when the CDS fa files from each genome were made, I looked online and the gffread program I am using has unfixed bug reports with similar issues so I assume that this is just a bug and needs to be worked around. The error was as follows:
+...making CDS fa using 2006 genome
+Error (GFaSeqGet): end coordinate (86668) cannot be larger than sequence length 86667  # for Twi7.2
+Error (GFaSeqGet): end coordinate (86668) cannot be larger than sequence length 86667
+Error (GFaSeqGet): end coordinate (177921) cannot be larger than sequence length 177920  # for _Twi7.2a
+Error (GFaSeqGet): end coordinate (177921) cannot be larger than sequence length 177920
+BASH_cmd_stdout: 
+...making CDS fa using 2014 genome
+Error (GFaSeqGet): end coordinate (86668) cannot be larger than sequence length 86667
+Error (GFaSeqGet): end coordinate (86668) cannot be larger than sequence length 86667
+Error (GFaSeqGet): end coordinate (177921) cannot be larger than sequence length 177920
+Error (GFaSeqGet): end coordinate (177921) cannot be larger than sequence length 177920
+
+This shouldn't be an issue for the sequence length should be 3224bp for Twi7.2 and 850bp for Twi7.2a. To work around this the end coordinate for "Twi7.2:Plus_Strand:Low-copy_repeat" and "Twi7.2:Minus_Strand:Low-copy_repeat" was changed from 86668 to 86667 (1nt) as this did not trigger the error. Also, the end coordinate for "_Twi7.2a:Plus_Strand:Low-copy_repeat" and "_Twi7.2a:Minus_Strand:Low-copy_repeat" was changed from 177921 to 177920. 
+Finally, I opened up the CDS files and checked that the sequences were the correct lengths and they were, issue resolved.
