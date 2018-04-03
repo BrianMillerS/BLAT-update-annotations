@@ -1,9 +1,21 @@
 #!/usr/bin/env python
 """
+Author: Brian Miller
+Description:
 This script takes in three inputs (an older version of a genome, a newer version of a genome,
 and a gtf file made from the older genome). This script makes a new gtf file with the 
-updated annotations using the newer version of the genome. This script uses Biopython and
-the command line BLAT ('blat - Standalone BLAT v. 36x2 fast sequence search command line tool').
+updated annotations using the newer version of the genome. This script uses Biopython,
+the command line BLAT ('blat - Standalone BLAT v. 36x2 fast sequence search command line tool')
+as well as the command gffread from the Cufflinks bundle (http://cole-trapnell-lab.github.io/cufflinks/).
+
+PLEASE NOTE that this script was used and worked most of the time, but for some longer more repetitive 
+annotations I had to blast them manually using a web interface to get the best coordinates. Thus there 
+may be bugs or even erros in this script and should be tested further before others use it. A more 
+secure approach to implement in the future might be to find the start coordinate for the forward and
+the reverse strand separately, then use those coordinates as the start and stop sites.
+
+This script requires a gtf made from the older version of the genome, and the old and new versions
+of the genome in fasta format along with their .fai indexed annotation files.
 """
 
 from Bio import SeqIO,SearchIO
@@ -23,9 +35,9 @@ def bash_cmd(command):
 
 def get_annotations_to_update(fasta1_filename,fasta2_filename):
     """
-    Returns a dictionary with the differeces between to multifasta files 
-    that have all the same headerlines but maybe different sequences
-    The dictionnary has sequences from the first file
+    Returns a dictionary with the differences between to multifasta files 
+    that have all the same header lines but maybe different sequences
+    The dictionary has sequences from the first file
     """
     print("\nDetermining which annotations to update:")
     fasta1 = SeqIO.parse(fasta1_filename, "fasta")
@@ -43,14 +55,18 @@ def get_annotations_to_update(fasta1_filename,fasta2_filename):
     for i in dic_1.keys():
         if i not in dic_2.keys():
             annotations_to_update[i] = dic_1[i]
-        else:
-            if dic_1[i] != dic_2[i]:
-                annotations_to_update[i] = dic_1[i]
+        elif dic_1[i] != dic_2[i]:
+            annotations_to_update[i] = dic_1[i]
 
     print("...{} annotations to update were found".format(len(annotations_to_update)))
     print("...the following annotations need to be updated...")
     for i in annotations_to_update.keys():
         print(i)
+        print("length of annotation from 2006 genome fa: {} bp".format(len(dic_1[i])))
+        if i in dic_2:
+            print("length of annotation from 2014 genome fa: {} bp\n".format(len(dic_2[i])))
+        else:
+            print("2014 Sequence was unable to be extracted from new geome (chromosome may bave changed and may be found via BLAT)\n")
     print("...the genomic sequences for these annotations were extracted from the 2006 genome\n")
     return annotations_to_update
 
@@ -92,7 +108,7 @@ for incorrect_annotation_key in annotations_to_update.keys():
                     print("...Hit: Percent identity (UCSC's formula): {}%".format(HSP.ident_pct))
                     HSP = hit[0]
                     scaffold = hit.id 
-                    start = HSP.hit_start
+                    start = HSP.hit_start +1  # the +1 compensates for pythons 0 based coordinate system
                     end = HSP.hit_end
                     print("...Hit: Scaffold: {}".format(scaffold))
                     print("...Hit: Start: {}".format(start))

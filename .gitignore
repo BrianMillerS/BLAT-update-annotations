@@ -5,3 +5,5 @@
 *.fasta
 *.gtf
 *.psl
+*post_blat_verification*
+*terminal*
