@@ -5,6 +5,8 @@ This script uses the blat output files (.psl files) to get the single top blat h
 Then a new gtf file is made using the scaffold, start, and stop information from each of these top hits.
 """
 
+from Bio import SeqIO,SearchIO
+import Bio.SearchIO.BlatIO as BlatIO
 from operator import itemgetter
 import os
 import csv
