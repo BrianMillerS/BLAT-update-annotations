@@ -3,7 +3,7 @@
 """
 This script uses the blat output files (.psl files) to get the single top blat hit (according to the 'number of nucleotide matches as a percentage of querry length').
 Then a new gtf file is made using the scaffold, start, and stop information from each of these top hits.
-"""
+""" 
 
 from Bio import SeqIO,SearchIO
 import Bio.SearchIO.BlatIO as BlatIO
