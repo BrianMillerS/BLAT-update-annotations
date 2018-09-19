@@ -20,6 +20,8 @@
 # blat (Standalone BLAT v.36x2)
 # gffread (from Cufflinks, http://cole-trapnell-lab.github.io/cufflinks/)
 #
+# NOTE that the scripts might throw an error when trying to run the executables, this can be prevented by replacing the above executables with their full paths in the scripts.
+#
 ##OUTPUTS##
 # This script will output a gtf file with the updated compatible with the new genome using the name provided in the [new annotation file to be made] field.
 # Along with this there will be three files in the /terminal_outputs that describe the steps taken and any annotations that should be confirmed by hand.

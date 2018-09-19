@@ -5,11 +5,12 @@ This script compares the sequences derived from the old and the new gtf annotati
 sequences differ,then information about that annotaion is returned.
 """
 
-from Bio import SeqIO,SearchIO
+from Bio import SeqIO, SearchIO
 import subprocess
 import os
 import csv
 import sys
+
 
 def bash_cmd(command):
     """
@@ -23,22 +24,22 @@ def bash_cmd(command):
 def get_gtf_info(gtf_filename):
     # open a gtf file, transfer lines to list
     gtf_lines = []
-    with open(gtf_filename,'r') as openhandle:  # open old gtf file
-        reader = csv.reader(openhandle,delimiter='\t')
+    with open(gtf_filename, 'r') as openhandle:  # open old gtf file
+        reader = csv.reader(openhandle, delimiter='\t')
         for i in reader:
-            gtf_lines.append(i) # create a data structure that is [['line1_item0','line1_item1'...],['line2_item0','line2_item2'...],...]
-    
+            gtf_lines.append(i)  # create a data structure that is [['line1_item0','line1_item1'...],['line2_item0','line2_item2'...],...]
+
     # transfer scaffold, start, stop information to dictionary
     gtf_dict = {}
     for line in gtf_lines:
         name = line[8].split('"')[1]  # get name of annotation
-        scaffold = line[0] # get the scaffold
+        scaffold = line[0]  # get the scaffold
         start = line[3]  # get the start position
         end = line[4]  # get the end position
-        gtf_dict[name]=[scaffold,start,end]
+        gtf_dict[name] = [scaffold, start, end]
 
     return gtf_dict
-    
+
 
 def return_fasta_dict(input_fa):
     # transfer the fasta biopython generator handles to dictionaries (hash tables)
@@ -46,7 +47,7 @@ def return_fasta_dict(input_fa):
     # load fa with biopython
     fasta = SeqIO.parse(input_fa, "fasta")
 
-    fa_dict= {}
+    fa_dict = {}
     for i in fasta:
         fa_dict[str(i.id)] = str(i.seq)
     return fa_dict
@@ -62,7 +63,6 @@ def compare_sequence_files(sequences_old_filename, sequences_new_filename, old_g
 
     old_gtf_dict = get_gtf_info(old_gtf_file)
     new_gtf_dict = get_gtf_info(new_gtf_file)
-
 
     annotations_still_not_the_same = []
     for anot in dict_old.keys():
@@ -80,17 +80,16 @@ def compare_sequence_files(sequences_old_filename, sequences_new_filename, old_g
 
 
 if __name__ == "__main__":
-    #inputs
+    # inputs
     genome_filename_new = sys.argv[1]
     old_sequences = "sequences_oldgtf_oldgenome.fa"
     new_sequences = "sequences_newgtf_newgenome.fa"
     old_gtf = sys.argv[3]
     new_gtf = sys.argv[2]
-    
 
     # extract sequences from the new genome using the updated gtf
     bash_cmd("gffread {} -g {} -w sequences_newgtf_newgenome.fa".format(new_gtf, genome_filename_new))
-    
+
     compare_sequence_files(old_sequences, new_sequences, old_gtf, new_gtf)
 
     print("compare_and_verify.py Done.")
